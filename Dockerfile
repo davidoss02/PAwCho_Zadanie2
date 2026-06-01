@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY package*.json ./
 # Instalujemy paczki bez devDependencies i automatycznie łatamy znane luki
-RUN npm install --omit=dev && npm audit fix
+RUN npm install --omit=dev && npm audit fix --force
 
 # --- Finalny obraz ---
 FROM node:22-alpine AS final
