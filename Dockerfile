@@ -1,17 +1,19 @@
 # syntax=docker/dockerfile:1.4
 # Autor: Dawid Dziura
 
-# --- Builder ---
 FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+RUN npm install -g npm@latest
+
 COPY package*.json ./
-# Instalujemy paczki bez devDependencies i automatycznie łatamy znane luki
-RUN npm install --omit=dev && npm audit fix --force
+RUN npm install --omit=dev
 
 # --- Finalny obraz ---
 FROM node:22-alpine AS final
+
+RUN npm install -g npm@latest
 
 # Etykiety
 LABEL org.opencontainers.image.authors="Dawid Dziura"

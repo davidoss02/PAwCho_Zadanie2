@@ -12,8 +12,6 @@
   "type":"module",
   "dependencies": {
     "express": "^5.2.1"
-  },
-  "overrides": {
-    "picomatch": "^4.0.4"
   }
+  
 }
