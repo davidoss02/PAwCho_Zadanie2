@@ -1,26 +1,25 @@
 # syntax=docker/dockerfile:1.4
 # Autor: Dawid Dziura
 
-#Builder
-
-FROM node:20-alpine AS builder
+# --- Builder ---
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --omit=dev
+# Instalujemy paczki bez devDependencies i automatycznie łatamy znane luki
+RUN npm install --omit=dev && npm audit fix
 
-#Finalny obraz
+# --- Finalny obraz ---
+FROM node:22-alpine AS final
 
-FROM node:20-alpine AS final
-
-#Etykiety
+# Etykiety
 LABEL org.opencontainers.image.authors="Dawid Dziura"
 LABEL org.opencontainers.image.title="Weather App (Node.js)"
 LABEL org.opencontainers.image.description="Aplikacja pogodowa - Express + Open-Meteo"
 LABEL org.opencontainers.image.version="1.0.0"
 
-#Zmienne środowiskowe
+# Zmienne środowiskowe
 ENV PORT=8080
 ENV NODE_ENV=production
 
@@ -30,9 +29,9 @@ COPY index.js .
 
 EXPOSE 8080
 
-#Healthcheck
+# Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -qO- http://127.0.0.1:${PORT}/healthz || exit 1
 
-#Uruchomienie aplikacji
+# Uruchomienie aplikacji
 CMD ["node", "index.js"]
